@@ -12,4 +12,4 @@ JAR_CONTENT=vlc/net/protocol \
 # Manifest file name. Stored in the src/java directory
 MANIFEST=
 
-include ${PROJECT_ROOT}/make/Makefile.java
+include ${PROJECT_ROOT}/make/Makefile.jav

@@ -5,7 +5,11 @@
 #
 
 ifndef PROJECT_ROOT
-export PROJECT_ROOT=/projects/uri
+  export PROJECT_ROOT=/usr/local/src/vlc/projects/uri/code
+endif
+
+ifndef JAVA_HOME
+  JAVA_HOME=/usr/local/java/jdk1.3
 endif
 
 SRC_DIR=$(PROJECT_ROOT)/src
@@ -13,16 +17,14 @@ DOCS_DIR=$(PROJECT_ROOT)/docs
 LIB_DIR=$(PROJECT_ROOT)/lib
 MAKE_DIR=$(PROJECT_ROOT)/make
 
-# Extra information needed for complete finding of classes
-#EXTRA_CLASSPATH = \
-#  /usr/local/mbox/jars/vlc_common.jar
-
 JAVA_DIR=$(SRC_DIR)
-#NATIVE_DIR=$(SRC_DIR)/native
-#INCLUDE_DIR=$(NATIVE_DIR)/include
+NATIVE_DIR=$(SRC_DIR)/native
+INCLUDE_DIR=$(NATIVE_DIR)/include
 
 DELETE   = rm -f
 MAKEDIR  = mkdir -p
 RMDIR    = rm -fr
 PRINT    = @echo
+COPY     = cp
 
+MAKEFLAGS=-s

@@ -1,5 +1,5 @@
 #
-# Top Level makefile for the Imageloader project from The VLC.
+# Top Level makefile for the IETF URI library.
 #
 # To use this, make sure that you have the PROJECT_ROOT environment variable
 # set 
@@ -9,7 +9,8 @@
 # javac/CLASSPATH setup for that. 
 #
 # The following commands are offered:
-# 
+#
+# - class:  Compile just the classes. Don't make JAR file 
 # - jar:      Make the java JAR file 
 # - javadoc:  Generate the javadoc information
 # - all:      Build everything (including docs)
@@ -17,18 +18,24 @@
 #
 
 ifndef PROJECT_ROOT
-export PROJECT_ROOT=/projects/uri
+export PROJECT_ROOT=/usr/local/src/vlc/projects/uri/code
 endif
 
-include make/Makefile.inc
+include $(PROJECT_ROOT)/make/Makefile.inc
 
 VERSION=1.1
 
-all: jar lib javadoc
+all: class jar javadoc
+
+class:
+	cd $(JAVA_DIR) && make buildall
 
 jar:
-	cd $(JAVA_DIR) && make buildall
+	cd $(JAVA_DIR) && make jar
 
 javadoc:
 	cd $(JAVA_DIR) && make javadoc
 
+nuke:
+	cd $(JAVA_DIR) && make clean
+	
