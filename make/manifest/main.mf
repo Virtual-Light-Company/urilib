@@ -1,0 +1,9 @@
+Class-path: 
+Extension-Name: URI Resolver
+Specification-Title: RFC 2396 URI Resolution System
+Specification-Vendor: Internet Engineering Task Force
+Specification-Version: 1.0
+Implementation-Vendor-Id: au.com.vlc
+Implementation-Vendor: Yumetech, Inc
+Implementation-Title: The URI resolver library
+Implementation-Version: 1.0

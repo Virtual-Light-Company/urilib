@@ -36,6 +36,9 @@ jar:
 javadoc:
 	cd $(JAVA_DIR) && make javadoc
 
+clean:
+	cd $(JAVA_DIR) && make clean
+
 nuke:
 	cd $(JAVA_DIR) && make clean
-	
+	cd $(JAR_DIR) && rm -f *.jar

@@ -1,15 +1,34 @@
+#*********************************************************************
 #
-# Makefile for producing the JAR file used by this library
+#                 (C) 2001-02 The Virtual Light Company
+#                    http://www.vlc.com.au/
 #
+# Makefile rules and useful functions for wide use for JAR files
+#
+# Author: Justin Couch
+# Version: $Revision: 1.4 $
+#
+#*********************************************************************
 
-# No need to put in subdirs here. We only do that if we want to explicitly
-# exclude some directory and then we name everything around it.
-JAR_CONTENT=vlc/net/protocol \
-            vlc/net/resolve \
-            vlc/net/content/text \
-            vlc/net/content/x_java
+# Describe every directory that you want included in the JAR file here.
+# This is not recursive, so if you want parent directory and the 
+# sub-directory, say so. These directories should not have '/' appended.
+JAR_CONTENT=vlc/net/protocol/data \
+  vlc/net/protocol/file \
+  vlc/net/protocol/http \
+  vlc/net/protocol/https \
+  vlc/net/protocol/jar \
+  vlc/net/protocol/shttp \
+  vlc/net/resolve/file \
+  vlc/net/resolve/thttp \
+  vlc/net/content/text \
+  vlc/net/content/x_java
 
 # Manifest file name. Stored in the src/java directory
-MANIFEST=
+MANIFEST=extras.mf
+
+# Extra files that are sourced from the root src directory. Typically
+# a global property file
+EXTRA_FILES=
 
 include ${PROJECT_ROOT}/make/Makefile.jav
