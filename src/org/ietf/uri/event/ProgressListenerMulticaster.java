@@ -84,7 +84,7 @@ package org.ietf.uri.event;
 public class ProgressListenerMulticaster
   implements ProgressListener
 {
-  protected final ProgressListener a, b;
+  private final ProgressListener a, b;
 
   /**
    * Creates an event multicaster instance which chains listener-a
@@ -95,8 +95,8 @@ public class ProgressListenerMulticaster
    * @param a listener-a
    * @param b listener-b
    */
-  protected ProgressListenerMulticaster(ProgressListener a,
-                                        ProgressListener b)
+  private ProgressListenerMulticaster(ProgressListener a,
+                                      ProgressListener b)
   {
     this.a = a;
     this.b = b;
@@ -107,7 +107,7 @@ public class ProgressListenerMulticaster
    * resulting multicast listener.
    * @param oldl the listener to be removed
    */
-  protected ProgressListener remove(ProgressListener oldl)
+  private ProgressListener remove(ProgressListener oldl)
   {
     if(oldl == a)
       return b;
@@ -331,8 +331,9 @@ public class ProgressListenerMulticaster
    * @param a event listener-a
    * @param b event listener-b
    */
-  protected static ProgressListener addInternal(ProgressListener a,
-                                                  ProgressListener b) {
+  private static ProgressListener addInternal(ProgressListener a,
+                                              ProgressListener b)
+  {
     if(a == null)
       return b;
 
@@ -353,8 +354,8 @@ public class ProgressListenerMulticaster
    * @param l the listener being removed from
    * @param oldl the listener being removed
    */
-  protected static ProgressListener removeInternal(ProgressListener l,
-                                                     ProgressListener oldl)
+  private static ProgressListener removeInternal(ProgressListener l,
+                                                 ProgressListener oldl)
   {
     if (l == oldl || l == null)
     {

@@ -106,6 +106,9 @@ public abstract class ResourceConnection
   /** The listener/multicaster for sending events */
   private ProgressListener progress_listener = null;
 
+  /** The list of global listeners for all events */
+  private static ProgressListener global_listener = null;
+
   /** The last fetched content handler */
   private ContentHandler last_content_handler = null;
 
@@ -127,7 +130,7 @@ public abstract class ResourceConnection
    */
   protected void notifyConnectionEstablished(String msg)
   {
-    if(progress_listener != null)
+    if((progress_listener != null) || (global_listener != null))
     {
       ProgressEvent evt =
         new ProgressEvent(this,
@@ -135,7 +138,11 @@ public abstract class ResourceConnection
                           msg,
                           -1);
 
-      progress_listener.connectionEstablished(evt);
+      if(progress_listener != null)
+        progress_listener.connectionEstablished(evt);
+
+      if(global_listener != null)
+        global_listener.connectionEstablished(evt);
     }
   }
 
@@ -155,7 +162,7 @@ public abstract class ResourceConnection
    */
   protected void notifyHandshakeInProgress(String msg)
   {
-    if(progress_listener != null)
+    if((progress_listener != null) || (global_listener != null))
     {
       ProgressEvent evt =
         new ProgressEvent(this,
@@ -163,7 +170,11 @@ public abstract class ResourceConnection
                           msg,
                           -1);
 
-      progress_listener.handshakeInProgress(evt);
+      if(progress_listener != null)
+        progress_listener.handshakeInProgress(evt);
+
+      if(global_listener != null)
+        global_listener.handshakeInProgress(evt);
     }
   }
 
@@ -180,6 +191,9 @@ public abstract class ResourceConnection
   {
     if(progress_listener != null)
       progress_listener.downloadStarted(evt);
+
+     if(global_listener != null)
+       global_listener.downloadStarted(evt);
   }
 
   /**
@@ -195,6 +209,9 @@ public abstract class ResourceConnection
   {
     if(progress_listener != null)
       progress_listener.downloadUpdate(evt);
+
+    if(global_listener != null)
+      global_listener.downloadUpdate(evt);
   }
 
   /**
@@ -210,6 +227,9 @@ public abstract class ResourceConnection
   {
     if(progress_listener != null)
       progress_listener.downloadError(evt);
+
+    if(global_listener != null)
+      global_listener.downloadError(evt);
   }
 
   /**
@@ -225,6 +245,9 @@ public abstract class ResourceConnection
   {
     if(progress_listener != null)
       progress_listener.downloadEnded(evt);
+
+    if(global_listener != null)
+      global_listener.downloadEnded(evt);
   }
 
   /**
@@ -571,6 +594,29 @@ public abstract class ResourceConnection
   {
     progress_listener =
       ProgressListenerMulticaster.remove(progress_listener, l);
+  }
+
+  /**
+   * Add a progress listener to the global pool for all connections..A global
+   * listener will receive events from all reosource connections that are live.
+   * This will be given events as you read content from the connection.
+   *
+   * @param l The listener to be added.
+   */
+  public static void addGlobalProgressListener(ProgressListener l)
+  {
+    global_listener = ProgressListenerMulticaster.add(global_listener, l);
+  }
+
+  /**
+   * Remove a progress listener from the global pool. This will be
+   * will no longer receive events.
+   *
+   * @param l The listener to be added.
+   */
+  public static void removeGlobalProgressListener(ProgressListener l)
+  {
+    global_listener = ProgressListenerMulticaster.remove(global_listener, l);
   }
 
   /**
