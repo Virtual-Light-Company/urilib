@@ -444,6 +444,11 @@ public class HttpsConnection extends HttpResourceConnection
     if(!connected)
       connect();
 
+    int resp = getResponseCode();
+    if(resp != HTTP_OK)
+      throw new IOException("File not found. " + uri + "\n" +
+                            "Response code: " + resp);
+
     InputStream stream = null;
 
     try

@@ -434,7 +434,7 @@ public class HttpConnection extends HttpResourceConnection
 
       // the 0'th field is special so fix it up
       header_keys.add(HEADER_0_KEY);
-      
+
       StringBuffer header_zero = new StringBuffer(response.getVersion());
       header_zero.append(' ');
       header_zero.append(response.getStatusCode());
@@ -473,6 +473,11 @@ public class HttpConnection extends HttpResourceConnection
 
     if(!connected)
       connect();
+
+    int resp = getResponseCode();
+    if(resp != HTTP_OK)
+      throw new IOException("File not found. " + uri + "\n" +
+                            "Response code: " + resp);
 
     InputStream stream = null;
 
