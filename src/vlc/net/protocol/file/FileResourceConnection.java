@@ -20,6 +20,7 @@ package vlc.net.protocol.file;
 import java.io.*;
 import java.net.UnknownServiceException;
 import java.net.MalformedURLException;
+import java.util.zip.GZIPInputStream;
 
 import org.ietf.uri.URL;
 import org.ietf.uri.URIUtils;
@@ -63,10 +64,13 @@ public class FileResourceConnection extends ResourceConnection
   private File target_file;
 
   /** The input stream to the file. Not created until requested */
-  private FileInputStream input_stream = null;
+  private InputStream input_stream = null;
 
   /** The output stream from the file. Not created until requested */
   private FileOutputStream output_stream = null;
+
+  /** Flag to say if this is a GZip encoded file */
+  private boolean is_gzip;
 
   /** The content type of the file */
   private String content_type = null;
@@ -104,7 +108,16 @@ public class FileResourceConnection extends ResourceConnection
         path = path.substring(1);
     }
 
-    target_file = new File(path);
+    if(path.endsWith(".gz"))
+    {
+      target_file = new File(path.substring(0, path.length() - 3));
+      is_gzip = true;
+    }
+    else
+    {
+      target_file = new File(path);
+      is_gzip = false;
+    }
   }
 
   /**
@@ -119,6 +132,9 @@ public class FileResourceConnection extends ResourceConnection
     if(input_stream == null)
     {
       input_stream = new FileInputStream(target_file);
+
+      if(is_gzip)
+        input_stream = new GZIPInputStream(input_stream);
     }
 
     return input_stream;

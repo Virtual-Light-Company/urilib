@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.zip.GZIPInputStream;
 
 // Application specific imports
 import org.ietf.uri.URI;
@@ -454,6 +455,9 @@ public class HttpsConnection extends HttpResourceConnection
     try
     {
       stream = response.getInputStream();
+      String enc = getContentEncoding();
+      if((enc != null) && enc.equals("x-gzip"))
+        stream = new GZIPInputStream(stream);
     }
     catch (ModuleException e)
     {
