@@ -141,6 +141,9 @@ public final class URL extends URI
   /** The external string representation of this URL */
   private String external_form = null;
 
+  /** Flag to indicate that the URL is of the generic form "protocol:blah" */
+  private boolean generic_url = false;
+
   /**
    * Creates a URL object from the specified protocol, host, port number, and
    * file. Specifying a port number of -1 indicates that the URL should use the
@@ -213,6 +216,11 @@ public final class URL extends URI
     {
       host = hostport[0];
       port = (hostport[1] == null) ? 0 : Integer.parseInt(hostport[1]);
+      generic_url = false;
+    }
+    else
+    {
+      generic_url = true;
     }
 
     path = URIUtils.getPathFromUrlString(spec);
@@ -622,7 +630,10 @@ public final class URL extends URI
 
     StringBuffer buffer = new StringBuffer(scheme);
 
-    buffer.append("://");
+    if(!generic_url)
+      buffer.append("://");
+    else
+      buffer.append(':');
 
     if(user_info != null)
     {
