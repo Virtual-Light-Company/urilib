@@ -105,7 +105,7 @@ final class DefaultFileMap
     int index = filename.lastIndexOf('.');
     String ext = filename.substring(index + 1);
 
-    return (String)extension_map.get(ext);
+    return (String)extension_map.get(ext.toLowerCase());
   }
 
   /**
@@ -119,12 +119,12 @@ final class DefaultFileMap
     Object basic_type = extension_map.reverseGet(mimetype);
 
     String ret_val = null;
-    
+
     if(basic_type instanceof Set)
     {
       Iterator itr = ((Set)basic_type).iterator();
       ret_val = (String)itr.next();
-    }   
+    }
     else
       ret_val = (String)basic_type;
 
