@@ -578,9 +578,13 @@ final class ResourceManager
 
             // discard the name
             field_tok.nextToken();
+
+            // first token comes straight from the tokenizer and contains
+            // the = char. Subsequent tokens use the a comma.
+
             while(field_tok.hasMoreTokens())
             {
-              ext = field_tok.nextToken(",");
+              ext = field_tok.nextToken(",=");
               ext = ext.substring(1);
               ext_map.put(ext, key);
             }
