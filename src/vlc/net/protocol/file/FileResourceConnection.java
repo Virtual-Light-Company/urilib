@@ -20,6 +20,7 @@ package vlc.net.protocol.file;
 import java.io.*;
 import java.net.UnknownServiceException;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
 import java.util.zip.GZIPInputStream;
 
 import org.ietf.uri.URL;
@@ -91,11 +92,19 @@ public class FileResourceConnection extends ResourceConnection
     super(new URL("file://" + uri));
 
     // strip the query part from path to get the needed bits.
-    String[] stripped_file = URIUtils.stripFile(uri);
 
-    this.path = stripped_file[0];
-    query = stripped_file[1];
-    reference = stripped_file[2];
+    try
+    {
+      String[] stripped_file = URIUtils.stripFile(URLDecoder.decode(uri, "UTF-8"));
+
+      this.path = stripped_file[0];
+      query = stripped_file[1];
+      reference = stripped_file[2];
+    }
+    catch(UnsupportedEncodingException uee)
+    {
+        throw new MalformedURLException("Invalid Encoding. Not UTF-8");
+    }
 
     // quick correction for win32 boxen if needed
     boolean is_win32 = System.getProperty("os.name").startsWith("Win") &&
