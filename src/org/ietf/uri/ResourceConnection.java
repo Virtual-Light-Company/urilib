@@ -552,6 +552,11 @@ public abstract class ResourceConnection
     if(!connected)
       return;
 
+/*
+    // This is commented out for now. This will actually force open the
+    // connection if it is not already open. The result is that if the
+    // connection is already open - for example a JAR file, it will kill
+    // the connection when it should not.
     try
     {
       InputStream is = getInputStream();
@@ -571,6 +576,7 @@ public abstract class ResourceConnection
     {
         // ignore it
     }
+*/
   }
 
   /**
@@ -654,6 +660,7 @@ public abstract class ResourceConnection
     // with or if we do, it says that we can close it.
     if((last_content_handler == null) ||
        !last_content_handler.requiresStreamAfterClose())
+
       close();
   }
 }
