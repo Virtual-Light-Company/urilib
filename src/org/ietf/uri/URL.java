@@ -226,6 +226,9 @@ public final class URL extends URI
     path = URIUtils.getPathFromUrlString(spec);
 
     query = URIUtils.getQueryFromUrlString(spec);
+    int refLoc = spec.lastIndexOf("#");
+    if (refLoc > -1)
+      reference = spec.substring(refLoc+1);
   }
 
   /**
