@@ -299,7 +299,7 @@ public final class URN extends URI
         // the search.
         break;
       }
-      
+
       try
       {
         urls = resolver.decodeList(this, URIResolverService.I2Ls);
@@ -777,5 +777,29 @@ public final class URN extends URI
   public String toString()
   {
     return toExternalForm();
+  }
+
+  /**
+   * Add a specific URN resolver to the system. If the resolver is already
+   * registered, the request is ignored. Note that this is appended to the
+   * list so registration order is important.
+   *
+   * @param resolver The resolver to add
+   */
+  public static void addResolver(URNResolverService resolver)
+  {
+    RDSManager.addURNResolver(resolver);
+  }
+
+  /**
+   * Add a specific URN resolver to the system. If the resolver is already
+   * registered, the request is ignored. Note that this is appended to the
+   * list so registration order is important.
+   *
+   * @param resolver The resolver to add
+   */
+  public static void removeResolver(URNResolverService resolver)
+  {
+      RDSManager.removeURNResolver(resolver);
   }
 }

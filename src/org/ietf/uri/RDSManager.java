@@ -145,6 +145,10 @@ public final class RDSManager
   /** The resource factory implementation passed to all the resolvers */
   private static URIResourceFactory resource_factory = null;
 
+  /** List of locally registered URN resolvers */
+  private static ArrayList local_resolvers = null;
+
+
   /**
    * Inner class that is used as an enumerator of all the resolvers when
    * a request is made to get all resolvers. The enumeration takes a snapshot
@@ -161,6 +165,8 @@ public final class RDSManager
 
     private String namespace;
     private int rds_service;
+
+    private boolean locals_checked;
 
     /**
      * Create a new instance of this enumerator. Sets the enumeration up and
@@ -189,6 +195,7 @@ public final class RDSManager
       rds_service = service;
 
       last_element = resolver_order.length - 1;
+      locals_checked = false;
     }
 
     /**
@@ -200,7 +207,8 @@ public final class RDSManager
      */
     public boolean hasMoreElements()
     {
-      return (current_element <= last_element);
+      return (!locals_checked && local_resolvers.size() > 0) ||
+             (current_element <= last_element);
     }
 
     /**
@@ -219,8 +227,24 @@ public final class RDSManager
 
       int i = current_element;
 
+      if(!locals_checked)
+      {
+        int size = local_resolvers.size();
+        for(int j = 0; j < size; j++)
+        {
+          URNResolverService res = (URNResolverService)local_resolvers.get(j);
+          if(res.canResolve(namespace))
+          {
+            ret_val = res;
+            break;
+          }
 
-      for( ; i <= last_element; i++)
+        }
+
+        locals_checked = true;
+      }
+
+      for( ; (ret_val == null) && (i <= last_element); i++)
       {
         // try the hashmap first to see if we have it loaded.
         Object resolver = rds_loaded.get(resolver_order[i]);
@@ -301,6 +325,7 @@ public final class RDSManager
 
     // OK, all worked, now lets create our resource factory interface
     resource_factory = new URIResourceFactoryImpl();
+    local_resolvers = new ArrayList();
   }
 
   /**
@@ -313,34 +338,38 @@ public final class RDSManager
 
     String current_line;
     ArrayList temp_list = new ArrayList(10);
-    InputStreamReader isr = new InputStreamReader(is);
 
-    StreamTokenizer strtok = new StreamTokenizer(isr);
-
-    strtok.commentChar('#');
-    strtok.wordChars('-', '-');
-    strtok.eolIsSignificant(false);
-
-    try
+    if(is != null)
     {
-      String token;
-      while(strtok.nextToken() != StreamTokenizer.TT_EOF)
+      InputStreamReader isr = new InputStreamReader(is);
+
+      StreamTokenizer strtok = new StreamTokenizer(isr);
+
+      strtok.commentChar('#');
+      strtok.wordChars('-', '-');
+      strtok.eolIsSignificant(false);
+
+      try
       {
-        if(strtok.ttype != StreamTokenizer.TT_WORD)
+        String token;
+        while(strtok.nextToken() != StreamTokenizer.TT_EOF)
         {
-          System.err.println("Error in urn.conf on line " +
-                             strtok.lineno() +
-                             ". Invalid input");
-          continue;
-        }
+          if(strtok.ttype != StreamTokenizer.TT_WORD)
+          {
+            System.err.println("Error in urn.conf on line " +
+                               strtok.lineno() +
+                               ". Invalid input");
+            continue;
+          }
 
-        token = strtok.sval;
-        temp_list.add(token);
+          token = strtok.sval;
+          temp_list.add(token);
+        }
       }
-    }
-    catch(IOException ioe)
-    {
-      System.err.println("General I/O Error reading config file " + ioe);
+      catch(IOException ioe)
+      {
+        System.err.println("General I/O Error reading config file " + ioe);
+      }
     }
 
     int size = temp_list.size();
@@ -440,12 +469,30 @@ public final class RDSManager
     URNResolverService ret_val = null;
     String[] local_resolve_order = getResolverOrder();
 
+    int size = local_resolvers.size();
+
     // if everything is dead then....
-    if(local_resolve_order == null)
+    if((local_resolve_order == null) && (size == 0))
       throw new NoURNConfigException("Fetching single resolver");
 
     int i;
-    for(i = 0; i < local_resolve_order.length; i++)
+
+    // Try the local resolvers first
+    if(size != 0)
+    {
+      for(i = 0; i < size; i++)
+      {
+        URNResolverService res = (URNResolverService)local_resolvers.get(i);
+        if(res.canResolve(nid))
+        {
+          ret_val = res;
+          break;
+        }
+
+      }
+    }
+
+    for(i = 0; (ret_val != null) && (i < local_resolve_order.length); i++)
     {
       // try the hashmap first to see if we have it loaded.
       Object resolver = rds_loaded.get(local_resolve_order[i]);
@@ -599,7 +646,7 @@ public final class RDSManager
       buffer.append(".Resolver");
 
       String class_name = buffer.toString();
-      
+
       try
       {
         Class reference = URNResolverService.class;
@@ -610,7 +657,7 @@ public final class RDSManager
         boolean instance_found = false;
 
         // First check that the class implements the right interfaces
-        // at this level. 
+        // at this level.
         if(temp_interfaces.length != 0)
         {
           for(int i = 0; i < temp_interfaces.length; i++)
@@ -654,7 +701,7 @@ public final class RDSManager
       {
         resolver = null;
         System.err.println();
-        System.err.println("Resolver class " + class_name + 
+        System.err.println("Resolver class " + class_name +
                            " had an configuration error: ");
         System.err.println(cfe);
         System.err.println("Continuing.....");
@@ -748,5 +795,30 @@ public final class RDSManager
   static URIResolverServiceFactory getURIResolverServiceFactory()
   {
     return rds_factory;
+  }
+
+  /**
+   * Add a specific URN resolver to the system. If the resolver is already
+   * registered, the request is ignored. Note that this is appended to the
+   * list so registration order is important.
+   *
+   * @param resolver The resolver to add
+   */
+  static void addURNResolver(URNResolverService resolver)
+  {
+    if((resolver != null) && !local_resolvers.contains(resolver))
+      local_resolvers.add(resolver);
+  }
+
+  /**
+   * Add a specific URN resolver to the system. If the resolver is already
+   * registered, the request is ignored. Note that this is appended to the
+   * list so registration order is important.
+   *
+   * @param resolver The resolver to add
+   */
+  static void removeURNResolver(URNResolverService resolver)
+  {
+      local_resolvers.remove(resolver);
   }
 }
