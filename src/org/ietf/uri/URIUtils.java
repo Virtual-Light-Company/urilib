@@ -348,7 +348,7 @@ public final class URIUtils
 
     boolean has_authority = false;
 
-    if((url[index] == '/') && (url[index + 1] == '/'))
+    if((index != url.length) && (url[index] == '/') && (url[index + 1] == '/'))
     {
       has_authority = true;
       index += 2;
