@@ -574,9 +574,22 @@ public final class URIUtils
 
     if(end_path == -1)
     {
-      ret_val[0] = file;
-      ret_val[1] = null;
-      ret_val[2] = null;
+      // No query section, so look for a reference
+      int end_query = file.indexOf('#');
+
+      if(end_query == -1)
+      {
+        ret_val[0] = file;
+        ret_val[1] = null;
+        ret_val[2] = null;
+      }
+      else
+      {
+        ret_val[0] = file.substring(0, end_query);
+        ret_val[1] = null;
+        ret_val[2] = file.substring(end_query + 1);
+      }
+
     }
     else
     {
