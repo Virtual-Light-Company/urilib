@@ -24,7 +24,7 @@ import org.ietf.uri.ContentHandler;
 import org.ietf.uri.ResourceConnection;
 
 /**
- * Content handler interface for the content type text/uri-list
+ * Content handler interface for the content type <code>text/uri-list</code>.
  * <P>
  *
  * The text/uri-list content type returns an array of strings

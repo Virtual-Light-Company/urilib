@@ -20,7 +20,7 @@ package org.ietf.uri.resolve;
 /**
  * Thrown to indicate that the resolver had some problem with it's startup
  * or processing of its configuration that prevents it from operating
- * properly
+ * properly.
  * <P>
  * Helpful utility exception used in the resolver internals.
  * <P>

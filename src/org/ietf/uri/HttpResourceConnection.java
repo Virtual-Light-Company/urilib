@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
  * A ResourceConnection with support for HTTP-specific features.
  * <P>
  *
- * Any implementation of a HTTP connection must extend this base class
+ * Any implementation of a HTTP connection must extend this base class.
  * <P>
  *
  * Provides similar functionality to the standard java.netHttpUrlConnection
@@ -193,7 +193,7 @@ public abstract class HttpResourceConnection extends ResourceConnection
 
   // Variables!!!
 
-  /** Do we automatically follow redirects? The default is true. */
+  /** Do we automatically follow redirects. The default is true. */
   protected static boolean followRedirects = true;
 
   /**
@@ -203,7 +203,7 @@ public abstract class HttpResourceConnection extends ResourceConnection
    */
   protected int maxRedirects = 5;
 
-  /** Allow the use of cookies? The default is no. */
+  /** Flag to allow the use of cookies. The default is no. */
   protected static boolean allowCookies = false;
 
   /** The current proxy host or <CODE>null</CODE> if not set (the default) */

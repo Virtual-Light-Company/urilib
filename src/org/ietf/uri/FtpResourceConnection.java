@@ -123,7 +123,7 @@ public abstract class FtpResourceConnection extends ResourceConnection
 
   // 3XX: User interaction commands
 
-  /** Username OK. need password */
+  /** Username OK. Need password */
   public static final int NEED_PASSWD = 331;
 
   /** Need account for login */

@@ -26,7 +26,7 @@ import java.net.MalformedURLException;
 import org.ietf.uri.*;
 
 /**
- * Implementation of a JAR resource connection
+ * Implementation of a JAR resource connection.
  * <P>
  *
  * Allows the search and retrieval of the contents of the jar file. Jar

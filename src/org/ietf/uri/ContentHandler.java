@@ -310,7 +310,7 @@ public abstract class ContentHandler extends java.net.ContentHandler
    * ResourceConnection from closing the stream on this object when it gets
    * garbage collected. The default implementation always returns false.
    *
-   * @returns true if the stream is required after the resource connection
+   * @return true if the stream is required after the resource connection
    *   closes
    */
   public boolean requiresStreamAfterClose()
