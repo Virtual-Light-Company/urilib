@@ -1,0 +1,15 @@
+   URN Lib Todo list
+
+ - When looking for resolvers and other dynamically loaded items the
+system should keep a list of the failed ones that didn't initialise
+properly so it does not attempt to keep loading them.
+
+ - ResourceConnection should have a method that returns the
+protocol type using the info from the URIConstants rather than having to either 
+guess and cast or fetch the URL and then get the protocol of the URL.
+
+ - Add a parseQuery to UriUtils method that does the same thing as HttpUtils from
+the servlet area
+
+ - Update content handling mechanism to deal with the JDK 1.3 update that
+allows you to specify a Class of the type that you want returned.

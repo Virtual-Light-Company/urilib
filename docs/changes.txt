@@ -1,0 +1,123 @@
+URI Class libraries
+--------------------
+
+Changes between 0.7 and 0.8
+----------------------------
+
+- Made common code section for RDSManager when finding the resolver order list.
+
+- Added convenience method to RDSManager to query for the list of strings
+that constitute the potentially available resolvers as strings.
+
+- Updated documentation on URIResolverService method call for return value
+definition being more clearly defined.
+
+- Moved all of the resolvers, content handlers and protocol handlers to the
+vlc.uri package out of org.ietf.uri. This is to minimise the package signature
+under the IETF namespace and keep the implementation local to VLC.
+
+- Removed dead code from static initialiser in File based Resolver class.
+
+- Cleaned up > 80 column text in file.FileParser
+
+Changes between 0.6 and 0.7
+----------------------------
+
+27 August 1999
+
+- Modified URIUtils to use URIs for getPath and getQuery so that you don't
+need to do the instanceof/cast calls anymore. Deleted old methods.
+
+- Added event mechanism for ResourceConnection. Now you get status updates
+on the download information, connection status and all sorts of good stuff
+like that. Added new package org.ietf.uri.event
+
+- Implemented content handler for alternative/multipart (sorta, doesn't
+always work as advertised).
+
+- FileResourceConnection.connect() now throws a FileNotFoundException if the
+file does not exist.
+
+- Fixed bug where the URIResourceFactory was not being set on ResolverServices
+being created from a ResolverServiceFactory.
+
+- Added new constructor to the URN class to allow creation from the component
+NID and NSS without having to form a string. Fixed some doco bugs.
+
+- Added new methods to ResolverManager and ResourceConnection to allow 
+internal registration of content types with extensions. Used so that some
+resource connections can make sure they get the right content type 
+interpretation.
+
+- Added platform specific filtering for Win32 to FileResourceConnection. Now
+automatically strips a leading '/' and swaps '|' to ':' if needed. 
+
+- Tested the crap out of the software. Has been used extensively within my
+applications at work for the past few months in real live situations. Seems
+to be holding together really well now. 
+
+Changes between 0.5 and 0.6
+----------------------------
+
+- Rewrote the internals of URL. Now no longer delegates to java.net.URL. All
+done internally.
+
+- Added method to strip a file into path, query and reference parts to
+URIUtils. Required some heavy reorganisation of URIUtils internally. Lots of
+new smaller methods to do stuff.
+
+- Added convenience method to URIUtils to take a string and return a URI
+object.
+
+- Made some changes to protocol.file.FileResourceConnection to deal with
+query parts. Was handling these wrong and looking for a filename with with ?
+as part of it if there was a query string.
+
+- Added last modified time to ResourceConnection. Updated
+FileResourceConnection to override this which returns File.lastModified.
+
+- Added text/uri-list content handler
+
+- Added simple data: protocol handler.
+
+- Fixed bug in text/plain content handler for the read from stream. Was reading
+too many characters that were being appended to the string buffer.
+
+- HttpResourceConnection now deals with proxy information and fields for
+allowing the use of cookies.
+
+- Basic implemetation of HttpResourceConnection using Innovation HTTPClient
+classes (LGPL'd) - http://www.innovation.ch/java/HTTPClient/ . Does all the
+standard stuff, plus PUT/POST, but nothing special. Can fetch images etc.
+
+- due to the nature of the HTTPClient code, this allows _very_ quick adaption
+to include HTTPS and SHTTP as well. Problem is that no authentication system is
+currently available (on the TBD list) so it sorta doesn't work. At least it
+finds the handlers and loads them
+
+- added x-java/jar content handler to load JAR files from a network
+
+- added JarResourceConnection based class and implementation. JAR URLs are now
+extended from the base Sun definition allowing you to describe a JAR file using
+a URN as the location eg urn:x-java:myfile.jar!/someclass.class that will use
+the URN system to automatically locate a JAR file.
+  o Should implement a resolver type that looks in the classpath for these
+  files.
+  o Should implement a URNClassLoader to take advantage of this.
+
+- Strip excess constants from URI that were in URIConstants and all the default
+port stuff from URI. URI.getDefaultPort marked deprecated - to be removed in
+v0.7
+
+- error in URIUtils parsing of authority. When parsing file:/// it worked fine
+but for JAR URLs that had jar:file:/// it mistakenly thought that file: was the
+authority definition. It now first checks for the existance of // before
+looking for the authority section.
+
+- removed dead code in file based resolver Resolver and FileParser
+
+- Added THTTP resolver. Only handles text/uri-list at this stage. HTML handler
+to come shortly and same with redirects for N2R. Not tested yet.
+
+Justin Couch
+27 May 1999
