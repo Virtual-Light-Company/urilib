@@ -81,15 +81,15 @@ public class FileResourceConnection extends ResourceConnection
    * @param uri The URI to establish the connection to
    * @exception MalformedURLException We stuffed up something in the filename
    */
-  protected FileResourceConnection(String path)
+  protected FileResourceConnection(String uri)
     throws MalformedURLException
   {
-    super(new URL("file://" + path));
+    super(new URL("file://" + uri));
 
     // strip the query part from path to get the needed bits.
-    String[] stripped_file = URIUtils.stripFile(path);
+    String[] stripped_file = URIUtils.stripFile(uri);
 
-    path = stripped_file[0];
+    this.path = stripped_file[0];
     query = stripped_file[1];
     reference = stripped_file[2];
 
