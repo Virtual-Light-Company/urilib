@@ -6,7 +6,7 @@
 # Package makefile for the org.ietf.uri directory
 #
 # Author: Justin Couch
-# Version: $Revision: 1.1 $
+# Version: $Revision: 1.2 $
 #
 #*********************************************************************
 
@@ -42,6 +42,8 @@ SOURCE =  URIConstants.java \
 	JarResourceConnection.java \
 	JavaNetContentHandlerWrapper.java \
 	JavaNetURLConnectionWrapper.java \
+	URLConnectionWrapper.java \
+	URLConnectionWrapperResourceStream.java \
 	RDSManager.java \
 	ResourceManager.java \
 	ProgressUpdateEvent.java \

@@ -20,6 +20,7 @@ package org.ietf.uri;
 // Standard imports
 import java.io.*;
 import java.util.*;
+import java.net.MalformedURLException;
 import java.net.URLStreamHandler;
 
 // Application specific imports
@@ -1118,7 +1119,24 @@ final class ResourceManager
       }
     }
 
-    // we can't try the standard java versions, so exit now.
+    if(handler_found)
+        return handler;
+
+
+    // Try the standard Java versions when all else fails by attempting to
+    // find one of the normal protocol handlers through the use of the URL
+    // object.
+
+    try
+    {
+        java.net.URL url = new java.net.URL(protocol, "", "");
+
+        handler = new URLConnectionWrapperResourceStream(protocol);
+    }
+    catch(MalformedURLException mue)
+    {
+        // Ignored again. Should never get this.
+    }
 
     return handler;
   }
