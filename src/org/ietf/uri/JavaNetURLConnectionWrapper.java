@@ -159,6 +159,26 @@ public class JavaNetURLConnectionWrapper extends URLConnection
   }
 
   /**
+   * Get the content held by this resource connection and the content object
+   * returned must match one of the classes provided. No hard guarantee is
+   * provided about which class will be chosen to match. The rough algorithm
+   * will be to return the content that could be provided by the first content
+   * handler that matches any of the classes. The content handler order
+   * determination algorithm is found in the package overview documentation.
+   * Within an individual content handler, the order used for priority is the
+   * order provided in the given array.
+   *
+   * @param classes The list of class types to check for compatibility
+   * @return The object read from the stream
+   * @exception IOException An error while reading the stream
+   */
+  public Object getContent(Class[] classes)
+    throws IOException
+  {
+    return connection.getContent(classes);
+  }
+
+  /**
    * Connect to the named resource if not already connected.
    *
    * @exception IOException Something happened on the connection.

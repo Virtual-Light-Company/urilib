@@ -230,6 +230,13 @@ final class ResourceManager
   /** Holder of the currently loaded content handlers */
   private static HashMap content_handlers = new HashMap();
 
+  /**
+   * Map of a Class type to the content handler that supports it. Although
+   * multiple content handlers may support a given Class type, only the first
+   * one found is actually stored in the map.
+   */
+  private static HashMap class_handlers = new HashMap();
+
   // Protocol Handlers
 
   /** The currently set content factory */
@@ -517,7 +524,7 @@ final class ResourceManager
 
     return ret_val;
   }
-  
+
   /**
    * Parse the content-types.properties file. All we need is the mime type
    * and the file extensions from each property defined in this file.  To
@@ -775,6 +782,184 @@ final class ResourceManager
     }
 
     return handler;
+  }
+
+  /**
+   * Fetch the content handler for the given mime type and also is capable of
+   * delivering it as one of the required set of classes. The rest of the
+   * content handler lookup rules apply.
+   *
+   * @param contentType The desired MIME type
+   * @param classes The list of class types you want matched
+   * @return The appropriate content handler or null if none can be found
+   */
+  static ContentHandler getContentHandler(String contentType, Class[] classes)
+  {
+    // Load the class_handler map.
+
+    ContentHandler ret_val = null;
+
+    if((classes == null) || (classes.length == 0))
+      ret_val = getContentHandler(contentType);
+    else
+      ret_val = getContentHandlerByClass(contentType, classes);
+
+    return ret_val;
+  }
+
+  /**
+   * Load all known content handlers and sort them by the classes they
+   * support. Content handlers are loaded in order of preference and stored
+   * in the class_handler map. Classes do not overwrite previously registered
+   * instances. It does not load the items from the factory because it assumes
+   * that they may be dynamically changed.
+   */
+  private static ContentHandler getContentHandlerByClass(String contentType,
+                                                         Class[] wanted)
+  {
+    if(contentType == null)
+      return null;
+
+    ContentHandler handler = null;
+
+    if(content_handlers != null)
+      handler = (ContentHandler)content_handlers.get(contentType);
+
+    if(handler != null && checkClassMatch(handler, wanted))
+      return handler;
+
+    // next we try the factory
+    if(content_factory != null)
+      handler = content_factory.createContentHandler(contentType);
+
+    if(handler != null)
+      return handler;
+
+    String pkg_list = null;
+
+    try
+    {
+      pkg_list = System.getProperty(CONTENT_PKG_PROP);
+    }
+    catch(SecurityException se)
+    {
+      // if we can't read it, then ignore it. We still have the default pkg
+    }
+
+    // append the default package to the list and prepare it for use
+    pkg_list = (pkg_list == null) ?
+                 CONTENT_DEFAULT_PKG :
+                 pkg_list + '|' + CONTENT_DEFAULT_PKG;
+
+    boolean handler_found = false;
+    char[] content_name = typeToPackageName(contentType);
+    StringTokenizer strtok = new StringTokenizer(pkg_list, "|");
+
+    // Loop through all of the available package names. Trim, splice and dice
+    // each package to load each handler instance. Only add to the handler map
+    // for classes that have not already had a content handler registered.
+    while(!handler_found && strtok.hasMoreTokens())
+    {
+      String pkg_name = strtok.nextToken().trim();
+      pkg_name = pkg_name.toLowerCase();
+      StringBuffer buffer = new StringBuffer(pkg_name);
+
+      // make up the class name to load
+      buffer.append('.');
+      buffer.append(content_name);
+
+      try
+      {
+        Class cls = Class.forName(buffer.toString());
+        if(cls != null)
+        {
+          handler = (ContentHandler)cls.newInstance();
+          handler_found = checkClassMatch(handler, wanted);
+        }
+      }
+      catch(Exception e)
+      {
+        // don't worry. We can ignore this one and try the next
+      }
+    }
+
+    if(handler != null)
+      return handler;
+
+    // Hmmm.... so we don't have one here. How about we try the old standard
+    // java stuff. If we find one, we'll need to put a wrapper around it.
+    // Same as the code above, but this time with different property list and
+    // different ContentHandler packaging....
+    try
+    {
+      pkg_list = System.getProperty(CONTENT_JAVA_PROP);
+    }
+    catch(SecurityException se)
+    {
+      // if we can't read it, then ignore it. We still have the default pkg
+    }
+
+    // append the default package to the list and prepare it for use
+    pkg_list = (pkg_list == null) ?
+                 CONTENT_JAVA_PKG :
+                 pkg_list + '|' + CONTENT_JAVA_PKG;
+
+    java.net.ContentHandler java_handler = null;
+    content_name = typeToPackageName(contentType);
+    strtok = new StringTokenizer(pkg_list, "|");
+
+    // Loop through all of the available package names. Trim, splice and dice
+    // each package looking for the appropriate class instance.
+    while(!handler_found && strtok.hasMoreTokens())
+    {
+      String pkg_name = strtok.nextToken().trim();
+      pkg_name = pkg_name.toLowerCase();
+      StringBuffer buffer = new StringBuffer(pkg_name);
+
+      // make up the class name to load
+      buffer.append('.');
+      buffer.append(content_name);
+
+      try
+      {
+        Class cls = Class.forName(buffer.toString());
+        if(cls != null)
+        {
+          java_handler = (java.net.ContentHandler)cls.newInstance();
+          handler = new JavaNetContentHandlerWrapper(java_handler);
+          handler_found = checkClassMatch(handler, wanted);
+        }
+      }
+      catch(Exception e)
+      {
+        // don't worry. We can ignore this one and try the next
+      }
+    }
+
+    // Now work on the packages defined for the
+    return handler;
+  }
+
+  /**
+   * Check to see if the content handler class matches one of the requested
+   * types.
+   *
+   * @param handler The handler to check
+   * @param wanted The classes to check for
+   * @return true if there is a match between the two
+   */
+  private static boolean checkClassMatch(ContentHandler handler,
+                                         Class[] wanted)
+  {
+    Class[] supported = handler.getSupportedClasses();
+    int size = supported == null ? 0 : supported.length;
+    boolean has_match = false;
+
+    for(int i = 0; i < size && !has_match; i++)
+      for(int j = 0; j < wanted.length && !has_match; j++)
+        has_match = wanted[j].equals(supported[i]);
+
+    return has_match;
   }
 
   /**

@@ -50,15 +50,15 @@ public interface FileNameMap extends java.net.FileNameMap
 {
   /**
    * Get the standardised extension used for the given MIME type. This
-   * provides a reverse mapping feature over the standard 
-   * [@link java.net.FileNameMap} that only supplies the opposite method.
+   * provides a reverse mapping feature over the standard
+   * {@link java.net.FileNameMap} that only supplies the opposite method.
    * <P>
    * There are many examples of where a number of extensions map to a single
    * MIME type. eg <CODE>.jpeg</CODE> and <CODE>.jpg</CODE> both map to
    * <CODE>image/jpeg</CODE>. The implementation of this method is free to
    * return either of these. The extension will not include the platform
    * specific extension separator (typically a '.' character);
-   * 
+   *
    * @param mimetype The mime type to check for
    * @return The extension or <CODE>null</CODE> if it cannot be resolved
    */

@@ -29,7 +29,41 @@ import java.net.UnknownServiceException;
 import org.ietf.uri.event.*;
 
 /**
- * Representation of a connection to a net based resource.
+ * Abstract representation of a connection to a net based resource described
+ * by a URI.
+ * <P>
+ *
+ * Instances of this connection may be used to either read information or write
+ * to that resource. While this is generically possible, not all connection
+ * implementations will allow this. Some will permit read-only access to the
+ * resource.
+ * <P>
+ *
+ * <B>Stream Handling</B>
+ * <P>
+ *
+ * A resource connection only represents a connection. At the time you first
+ * obtain an instance of this class there will be nothing available. Any
+ * attempt to access data or write data to the connection will force the
+ * stream to open if you have not already explicitly done so. For example,
+ * calling {@link #getContent()} without first calling {#link #connect()}
+ * will result in a connection being established first and then accessing
+ * the contents.
+ * <P>
+ *
+ * As part of the aggressive garbage collection policy undertaken by the
+ * library, a ResourceConnection will automatically attempt to close the
+ * underlying streams when it is garbage collected. ContentHandlers built for
+ * this system have a way of preventing this happening. However, user code
+ * that may access the stream directly will have to prevent this happening
+ * by maintaining a reference to this connection until that interaction has
+ * finished. If you find that your connection is being suddenly closed on
+ * you, check to see that you are maintaining a reference. This is much more
+ * prevalent on JVMs with incremental garbage collection implementation such
+ * as Sun's JDK 1.3 Hotspot VM.
+ * <P>
+ *
+ * <B>Further Information</B>
  * <P>
  *
  * For details on URIs see the IETF working group:
@@ -71,6 +105,9 @@ public abstract class ResourceConnection
 
   /** The listener/multicaster for sending events */
   private ProgressListener progress_listener = null;
+
+  /** The last fetched content handler */
+  private ContentHandler last_content_handler = null;
 
   /**
    * Create an instance of this connection.
@@ -235,6 +272,36 @@ public abstract class ResourceConnection
 
     if(handler != null)
       content = handler.getContent(this);
+    return content;
+  }
+
+  /**
+   * Get the content held by this resource connection and the content object
+   * returned must match one of the classes provided. No hard guarantee is
+   * provided about which class will be chosen to match. The rough algorithm
+   * will be to return the content that could be provided by the first content
+   * handler that matches any of the classes. The content handler order
+   * determination algorithm is found in the package overview documentation.
+   * Within an individual content handler, the order used for priority is the
+   * order provided in the given array.
+   *
+   * @param classes The list of class types to check for compatibility
+   * @return The object read from the stream
+   * @exception IOException An error while reading the stream
+   */
+  public Object getContent(Class[] classes)
+    throws IOException
+  {
+    InputStream stream = getInputStream();
+
+    String content_type = getContentType();
+    ContentHandler handler = getContentHandler(content_type, classes);
+
+    Object content = null;
+
+    if(handler != null)
+      content = handler.getContent(this, classes);
+
     return content;
   }
 
@@ -417,7 +484,7 @@ public abstract class ResourceConnection
   {
     return ResourceManager.getFileExtension(mimetype);
   }
-  
+
   /**
    * Fetch the content handler for the given mime type. First check the factory
    * (if set), then the list of provided packages. It then checks the default
@@ -425,12 +492,62 @@ public abstract class ResourceConnection
    * that come as part of the standard java setups. It places a wrapper around
    * these to make it conform with our local stuff.
    *
-   * @param contentType The desired MIMType
+   * @param contentType The desired MIME type
    * @return The appropriate content handler or null if none can be found
    */
   protected ContentHandler getContentHandler(String contentType)
   {
-    return ResourceManager.getContentHandler(contentType);
+    last_content_handler = ResourceManager.getContentHandler(contentType);
+    return last_content_handler;
+  }
+
+  /**
+   * Fetch the content handler for the given mime type and also is capable of
+   * delivering it as one of the required set of classes. The rest of the
+   * content handler lookup rules apply.
+   *
+   * @param contentType The desired MIME type
+   * @param classes The list of class types you want matched
+   * @return The appropriate content handler or null if none can be found
+   */
+  protected ContentHandler getContentHandler(String contentType,
+                                             Class[] classes)
+  {
+    last_content_handler =
+      ResourceManager.getContentHandler(contentType, classes);
+
+    return last_content_handler;
+  }
+
+  /**
+   * Force the closure of this content handler. This will grab the input and
+   * output streams and force close them. This is a bit nasty and will generate
+   * IOExceptions in the reader so only use when you really have to.
+   */
+  public void close()
+  {
+    if(!connected)
+      return;
+
+    try
+    {
+      InputStream is = getInputStream();
+      is.close();
+    }
+    catch(Exception use)
+    {
+        // ignore it
+    }
+
+    try
+    {
+      OutputStream is = getOutputStream();
+      is.close();
+    }
+    catch(Exception use)
+    {
+        // ignore it
+    }
   }
 
   /**
@@ -476,5 +593,21 @@ public abstract class ResourceConnection
     }
 
     return name_string;
+  }
+
+  /**
+   * Finalize the code for cleanup. Makes sure that the connections are
+   * closed and there are no dangling pointers.
+   */
+  public void finalize()
+  {
+    if(!connected)
+        return;
+
+    // Close the connection only if we don't have a content handler to check
+    // with or if we do, it says that we can close it.
+    if((last_content_handler == null) ||
+       !last_content_handler.requiresStreamAfterClose())
+      close();
   }
 }
