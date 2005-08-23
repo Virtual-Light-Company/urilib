@@ -1,12 +1,12 @@
 #*********************************************************************
 #
-#  (C) 2001-02 Web3d Consortium
-#    http://www.web3d.org/
+#  (C) 2001-05 Justin Couch
+#    http://www.vlc.com.au/~justin/
 #
 # Lowest level common makefile for both native and Java code
 # 
 # Author: Justin Couch
-# Version: $Revision: 1.4 $
+# Version: $Revision: 1.5 $
 #
 #*********************************************************************
 
@@ -40,8 +40,11 @@ MAKEDIR   = mkdir -p
 RMDIR     = rm -fr
 PRINT     = @echo
 COPY      = cp 
-COPY_PATH = cp -P
+COPY_PATH = cp --parents
 CHMOD     = chmod
 CD        = cd
+
+#JAVAC_FLAGS=-deprecation
+#JAVADOC_FLAGS=
 
 MAKEFLAGS=-s

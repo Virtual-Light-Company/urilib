@@ -1,12 +1,12 @@
 #*********************************************************************
 #
-#  (C) 2001-02 Web3d Consortium
-#    http://www.web3d.org/
+#  (C) 2001-05 Justin Couch
+#    http://www.vlc.com.au/~justin/
 #
 # Makefile rules and useful functions for wide use for Java specific tasks
 #
 # Author: Justin Couch
-# Version: $Revision: 1.3 $
+# Version: $Revision: 1.4 $
 #
 #*********************************************************************
 
@@ -132,7 +132,7 @@ PLIST_BUILD     = $(patsubst %,$(JAVA_SRC_DIR)/%/.build,$(PACKAGE_LIST))
 # Option listing for the various commands
 #
 JAVAC_OPTIONS = -d $(DESTINATION) -classpath $(CLASSPATH) \
-                -sourcepath $(SOURCEPATH)
+                -sourcepath $(SOURCEPATH) $(JAVAC_FLAGS)
 JAVAH_OPTIONS = -d $(INCLUDE_DIR) -classpath $(CLASSPATH)
 
 ifdef MANIFEST
@@ -149,6 +149,7 @@ JAVADOC_OPTIONS  = \
      -author \
      -use \
      -version \
+     -quiet \
      -windowtitle $(WINDOWTITLE) \
      -doctitle $(DOCTITLE) \
      -header $(HEADER) \
@@ -157,6 +158,10 @@ JAVADOC_OPTIONS  = \
 	 
 ifdef OVERVIEW
   JAVADOC_OPTIONS += -overview $(OVERVIEW)
+endif
+
+ifdef JAVADOC_FLAGS
+  JAVADOC_OPTIONS += $(JAVADOC_FLAGS)
 endif
 
 #
