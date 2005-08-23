@@ -21,7 +21,6 @@ import java.io.*;
 import java.net.UnknownServiceException;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
-import java.util.zip.GZIPInputStream;
 
 import org.ietf.uri.URL;
 import org.ietf.uri.URIUtils;
@@ -65,20 +64,22 @@ public class FileResourceConnection extends ResourceConnection
   private File target_file;
 
   /** The input stream to the file. Not created until requested */
-  private InputStream input_stream = null;
+  private InputStream input_stream;
 
   /** The output stream from the file. Not created until requested */
-  private FileOutputStream output_stream = null;
-
-  /** Flag to say if this is a GZip encoded file */
-  private boolean is_gzip;
+  private FileOutputStream output_stream;
 
   /** The content type of the file */
-  private String content_type = null;
+  private String content_type;
 
-  private String path;
-  private String query;
-  private String reference;
+  /** The path portion of the URI */
+  protected String path;
+
+  /** The query portion of the URI (typically null for files) */
+  protected String query;
+
+  /** The reference portion of the URI */
+  protected String reference;
 
   /**
    * Create an instance of this connection.
@@ -117,16 +118,7 @@ public class FileResourceConnection extends ResourceConnection
         path = path.substring(1);
     }
 
-    if(path.endsWith(".gz"))
-    {
-      target_file = new File(path.substring(0, path.length() - 3));
-      is_gzip = true;
-    }
-    else
-    {
-      target_file = new File(path);
-      is_gzip = false;
-    }
+    target_file = new File(path);
   }
 
   /**
@@ -139,12 +131,7 @@ public class FileResourceConnection extends ResourceConnection
     throws IOException
   {
     if(input_stream == null)
-    {
       input_stream = new FileInputStream(target_file);
-
-      if(is_gzip)
-        input_stream = new GZIPInputStream(input_stream);
-    }
 
     return input_stream;
   }
@@ -232,5 +219,4 @@ public class FileResourceConnection extends ResourceConnection
   {
     return target_file.lastModified();
   }
-
 }
