@@ -152,7 +152,7 @@ public class ProgressEvent
   {
     this.source = src;
     this.msg = msg;
-    this.value = value;
+    this.value = val;
     this.type = type;
   }
 
