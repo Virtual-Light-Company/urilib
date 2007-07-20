@@ -445,10 +445,10 @@ public class HttpConnection extends HttpResourceConnection
       header_map.put(HEADER_0_KEY, header_zero.toString());
 
       // fill arrays
-      Enumeration enum = response.listHeaders();
-      while(enum.hasMoreElements())
+      Enumeration headers = response.listHeaders();
+      while(headers.hasMoreElements())
       {
-        String key = (String)enum.nextElement();
+        String key = (String)headers.nextElement();
         header_keys.add(key);
         header_map.put(key, response.getHeader(key));
       }

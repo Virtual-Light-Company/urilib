@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
  * Being an enumeration, it is a one shot at the list of items. Once set, it
  * cannot be re-used to create a new list.
  * <P>
- * 
+ *
  * For details on URIs see the IETF working group:
  * <A HREF="http://www.ietf.org/html.charters/urn-charter.html">URN</A>
  * <P>
@@ -65,11 +65,11 @@ class StringEnumerator
    * Create a new instance of this class with the given array of strings.
    * Assumes that the array is non-null.
    *
-   * @param enum The array of strings to enumerate through
+   * @param values The array of strings to enumerate through
    */
-  StringEnumerator(String[] enum)
+  StringEnumerator(String[] values)
   {
-    values = enum;
+    this.values = values;
   }
 
   /**

@@ -406,10 +406,10 @@ public class HttpsConnection extends HttpResourceConnection
         connect();
 
       // fill arrays
-      Enumeration enum = response.listHeaders();
-      while(enum.hasMoreElements())
+      Enumeration headers = response.listHeaders();
+      while(headers.hasMoreElements())
       {
-        String key = (String)enum.nextElement();
+        String key = (String)headers.nextElement();
         header_keys.add(key);
         header_map.put(key, response.getHeader(key));
       }
