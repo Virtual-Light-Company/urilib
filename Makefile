@@ -49,7 +49,7 @@ class:
 	make -f $(JAVA_DIR)/Makefile buildall
 
 jar:
-	make -f $(SHADER_DIR)/Makefile jar
+	make -f $(JAVA_DIR)/Makefile jar
 
 javadoc:
 	make -f $(JAVA_DIR)/Makefile javadoc
