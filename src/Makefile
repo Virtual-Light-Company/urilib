@@ -6,7 +6,7 @@
 # Package makefile for the org.ietf.uri.event directory
 #
 # Author: Justin Couch
-# Version: $Revision: 1.4 $
+# Version: $Revision: 1.5 $
 #
 #*********************************************************************
 
@@ -42,6 +42,10 @@ JAVADOC_PACKAGES = \
   vlc.net.protocol.https \
   vlc.net.protocol.shttp \
   vlc.net.protocol.jar 
+
+# A version number we tack onto the JAR file name for eclipse versioning
+# purposes.
+JAR_VERSION=1.0.1
 
 # Names of JAR files we want to create
 JARS = uri.jar vlc_uri.jar
