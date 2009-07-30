@@ -647,7 +647,7 @@ public final class URL extends URI
     if(host != null)
       buffer.append(host);
 
-    if(port > 0)
+    if(port > 0 && port != URIUtils.getDefaultPort(getProtocol()))
     {
       buffer.append(':');
       buffer.append(port);
