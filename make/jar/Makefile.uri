@@ -6,9 +6,13 @@
 # Makefile rules and useful functions for wide use for JAR files
 #
 # Author: Justin Couch
-# Version: $Revision: 1.4 $
+# Version: $Revision: 1.5 $
 #
 #*********************************************************************
+
+# A version number we tack onto the JAR file name for eclipse versioning
+# purposes.
+JAR_VERSION=1.0.0
 
 # Describe every directory that you want included in the JAR file here.
 # This is not recursive, so if you want parent directory and the 
