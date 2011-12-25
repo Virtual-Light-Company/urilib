@@ -45,7 +45,7 @@ JAVADOC_PACKAGES = \
 
 # A version number we tack onto the JAR file name for eclipse versioning
 # purposes.
-JAR_VERSION=1.0.1
+JAR_VERSION=2.0.0
 
 # Names of JAR files we want to create
 JARS = uri.jar vlc_uri.jar
@@ -57,11 +57,6 @@ JARS_3RDPARTY= httpclient.jar gnu-regexp.jar
 # directory when we are making JAR files.
 EXTRA = 
 
-# Definitions of setup information if we are making a self-executable JAR
-MAIN_CLASS     = 
-MAIN_PACKAGE   = 
-MAIN_JAR       = uri.jar
-
 #*********************************************************************
 #
 # Javadoc
@@ -72,7 +67,7 @@ OVERVIEW    = overview.html
 WINDOWTITLE = 'URI Class Library Specification'
 DOCTITLE    = 'URI Classes API'
 HEADER      = 'URI Classes API'
-BOTTOM      = '<center><font size=2>Copyright &copy; 1999 - 2001 \
+BOTTOM      = '<center><font size=2>Copyright &copy; 1999 - 2012 \
 		       <a href=\"http://www.vlc.com.au\">The Virtual Light Company</a> \
                </font></center>'
 

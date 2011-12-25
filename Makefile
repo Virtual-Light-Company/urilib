@@ -23,8 +23,6 @@ endif
 
 include $(PROJECT_ROOT)/make/Makefile.inc
 
-VERSION=1.1
-
 all: class jar javadoc
 
 # Default instruction is to print out the help list

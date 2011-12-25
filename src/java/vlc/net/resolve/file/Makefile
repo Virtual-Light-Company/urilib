@@ -16,13 +16,15 @@ PACKAGE = vlc.net.resolve.file
 # compiled in
 SOURCE = InvalidRegexException.java \
 	NoSuchGroupException.java \
-	FileParser.java \
+	Resource.java \
 	GroupResource.java \
 	NamespaceResolver.java \
+	FileParser.java \
 	Resolver.java \
-	Resource.java 
 
-JARS_3RDPARTY = gnu-regexp-1.0.8.jar
+# If the package requires extra classes outside the JDK, the JAR files that 
+# are required are listed here. These should be found in ${PROJECT_ROOT}/lib
+JARS_3RDPARTY =	gnu-regexp-1.0.8.jar
 
 # The list of other files we need to copy from this directory to the classes
 # directory when we are making JAR files.
