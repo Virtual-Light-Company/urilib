@@ -1,0 +1,30 @@
+<!--
+  ~ Copyright (c) 1999 - 2012 The Virtual Light Company
+  ~                            http://www.vlc.com.au/
+  ~
+  ~ This code is licensed under the GNU Library GPL v2.1. Please read docs/LICENSE.txt
+  ~ for the full details. A copy of the LGPL may be found at
+  ~
+  ~ http://www.gnu.org/copyleft/lgpl.html
+  ~
+  ~ The code is distributed as-is and contains no warranty or guarantee for fitnesse of
+  ~ purpose. Use it at your own risk.
+  -->
+
+<HTML>
+<BODY>
+Protocol handler for <CODE>ldap:</CODE> type information
+<P>
+
+<H2>Capabilities</H2>
+
+This handles URLs of the form 
+<PRE>
+ldap://host:port/dc=foo,dn=blah
+</PRE>
+
+This returns an object representing that attribute. If the path is null then
+you get the whole database.
+
+</BODY>
+</HTML>

@@ -1,0 +1,33 @@
+#
+# URN bindings file used to configure URI resolver for file.
+#
+# See http://www.vlc.com.au/~justin/java/urn/file_based_resolver.html
+# for more information
+#
+# vrml name spaces:
+# urn:vrml:umel:/some/dir/file.ext
+#
+NID: vrml /urn:vrml:([^\/:]+)/\1/i
+  GRP: umel
+    # these rules just tack "some/dir/file.ext" onto the src URL
+    RES: "file:///c:/justin/projects/vrml97_src/test/"  /urn:vrml:umel:\/?(.*)/\1/i
+    RES: "http://urn.vrml.org/umel/" /urn:vrml:umel:\/?(.*)/\1/i
+  GRP: eai
+    # results in a URL that looks like http://..../eai.pl?type=dir+image=file.ext
+    RES: "http://urn.vrml.org/eai.pl?" /urn:vrml:eai:([\/])([^\/]+)\/(.*)/type=\2+image=\3/i
+    RES: "http://urn.vlc.com.au/eai/images/" /urn:vrml:eai:\/?(.*)/\1/i
+
+# Mantis Corp name space:
+# urn:mantis:livingdesktop:/some/dir/file.ext
+NID: mantis /urn:mantis:([^\/:]+)/\1/i
+  GRP: livingdesktop
+    RES: "file:///C:/Living Desktop/Desktops/" /urn:mantis:livingdesktop:([^\/])\/(.*)/\1/i
+    RES: "http://www.livingdesktop.com/desktops/" /urn:mantis:livingdesktop:([^\/])\/(.*)/\1/i
+
+#
+# Experimental CID namespace (from draft NAPTR spec)
+# urn:cid:199606121851.1@mordred.gatech.edu
+#
+NID: cid /urn:cid:.+@([^\.]+\.)(.*)$/\2/i
+  GRP: gatech.edu
+    RES: "http://www.gatech.edu/cgi-bin/resources.pl?" /urn:cid:(.+)@([^\.]+\.)(.*)$/uid=\1/i

@@ -1,0 +1,68 @@
+<!--
+  ~ Copyright (c) 1999 - 2012 The Virtual Light Company
+  ~                            http://www.vlc.com.au/
+  ~
+  ~ This code is licensed under the GNU Library GPL v2.1. Please read docs/LICENSE.txt
+  ~ for the full details. A copy of the LGPL may be found at
+  ~
+  ~ http://www.gnu.org/copyleft/lgpl.html
+  ~
+  ~ The code is distributed as-is and contains no warranty or guarantee for fitnesse of
+  ~ purpose. Use it at your own risk.
+  -->
+
+<HTML>
+<BODY>
+The core libraries to provide a URI services to an application.
+<P>
+
+<H2>Capabilities</H2>
+
+Three types of resources are currently managed - Filename maps, content
+handlers and protocol handlers. The process for dealing with the three
+are identical. There are three ways, in order of priority, for specifying
+the class to use. Variations are provided below.
+
+<OL>
+<LI>Using the set handler factory.
+<LI>Locating the class in the package from the defined system resource
+<LI>Locating the class from a default package name
+</OL>
+
+The properties for each can be summed up as follows:
+<TABLE>
+<TR>
+  <TH>Access type
+  <TH>Factory Class
+  <TH>Package list property
+  <TH>Default package
+</TR>
+<TR>
+  <TD>Filename map
+  <TD>FileNameMap
+  <TD>uri.filename.handler.pkgs
+  <TD>org.ietf.uri.filemap
+</TR>
+<TR>
+  <TD>Content Handlers
+  <TD>ContentHandlerFactory
+  <TD>uri.content.handler.pkgs
+  <TD>org.ietf.uri.content
+</TR>
+<TR>
+  <TD>Protocol Handlers
+  <TD>URIResourceStreamFactory
+  <TD>uri.protocol.handler.pkgs
+  <TD>org.ietf.uri.protocol
+</TR>
+</TABLE>
+
+In this implementation, a default handler also works with the standard
+properties defined by the <CODE>java.net</CODE> package. Where this
+occurs, wrapper classes are used to make sure of seemless integration.
+This allows easy movement of old code to the new system with minimal
+distruption.
+<P>
+
+</BODY>
+</HTML>
